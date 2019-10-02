@@ -25,6 +25,22 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+// timestamp microservice
+// '?' at the end of ':datestring' means datestring is optional
+app.get('/api/timestamp/:datestring?', (req, res) => {
+  let { params: { datestring } } = req;
+  if (datestring) {
+    datestring = datestring.split('-');
+    datestring = datestring.length === 1 ? Number(datestring.join()) : datestring.join('-');
+    let utc = new Date(datestring);
+    let response = utc === 'Invalid Date' ? { error: utc } : { unix: datestring, utc: utc.toUTCString() };
+    res.send(response);  
+  }
+  else {
+    let date = new Date;
+    res.send({ unix: date.getTime(), utc: date.toUTCString() })
+  }
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
